@@ -1,17 +1,19 @@
 version: '2'
 services:
   apache:
-    image: rafaelcgstz/magento2
-    # build: .
+    #image: mymagento2_apache
+    build: .
     ports:
       - "80:80" # web
       - "9001:9000" # xdebug
       # - "35729:35729" # live reload
     volumes:
-      - ./src:/var/www/html
+      #- ./src:/var/www/html
       - ~/.composer:/var/www/.composer
-      - ~/.npm:/var/www/.npm
+      #- ~/.npm:/var/www/.npm
       # - ~/.nvm:/var/www/.nvm
+    volumes_from:
+      - appdataCD
     environment:
       XDEBUG_CONFIG: "remote_host=localhost"
       PHP_IDE_CONFIG: "serverName=Docker"
@@ -20,21 +22,24 @@ services:
     links:
       - db
     networks:
-      - <project_name>-network
+      - MYMAGENTO2-network
 
   db:
-    image: mariadb
+    #image: mariadb
+    image: mysql:latest
     ports:
-     - 3300:3306
+     - 3306:3306
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=magento
       - MYSQL_USER=magento
       - MYSQL_PASSWORD=magento
     volumes:
-      - dbdata:/var/lib/mysql
+      - ~/.docker/mysqlconf:/etc/mysql/conf.d
+    volumes_from:
+      - dbdataCD
     networks:
-      - <project_name>-network
+      - MYMAGENTO2-network
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -46,21 +51,21 @@ services:
     ports:
      - 8080:80
     networks:
-      - <project_name>-network
+      - MYMAGENTO2-network
 
   redis:
     image: redis
     ports:
      - 6379
     networks:
-      - <project_name>-network
+      - MYMAGENTO2-network
 
   redis-session:
     image: redis
     ports:
      - 6379
     networks:
-      - <project_name>-network
+      - MYMAGENTO2-network
 
   mailhog:
     image: mailhog/mailhog
@@ -68,12 +73,22 @@ services:
       - 1025:1025
       - 8025:8025
     networks:
-      - <project_name>-network
+      - MYMAGENTO2-network
+
+  appdataCD:
+    image: tianon/true
+    volumes:
+      - /host_mnt/c/Github/MantisMan13/clean_docker/MantisMan_Magento2/clean-docker-Magento2/src:/var/www/html
+  dbdataCD:
+    image: tianon/true
+    volumes:
+      - /host_mnt/c/Github/MantisMan13/clean_docker/MantisMan_Magento2/clean-docker-Magento2/mysql:/var/lib/mysql
 
 networks:
-  <project_name>-network:
+  MYMAGENTO2-network:
     driver: bridge
 
-volumes:
-  dbdata:
-    driver: local
+#volumes:
+#  dbdata:
+#    driver: local
+

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -x
 if [ $@ ]; then
   composer create-project --repository-url=https://repo.magento.com/ magento/project-community-edition:$1 . ;
 else
@@ -18,9 +19,11 @@ chmod u+w -R ./var ./vendor ./pub/static ./pub/media ./app/etc \
     --admin-password=admin123 \
     --language=en_US \
     --currency=USD \
-    --timezone=America/Chicago \
+    --timezone=America/New_York \
     --use-rewrites=1 \
     --backend-frontname=admin \
+    --use-secure=0 \
+    --use-secure-admin=0 \
     --use-sample-data \
 && mv ./app/etc/env.php ./app/etc/env.original.php;
 cp -rv /var/www/env.sample.php ./app/etc/env.php;
@@ -34,8 +37,9 @@ cp ~/.composer/auth.json var/composer_home/auth.json \
 mv package.json.sample package.json ; mv Gruntfile.js.sample Gruntfile.js;
 npm i;
 php -f ./bin/magento deploy:mode:set production \
-&& composer dump-autoload -o \
-&& clear && echo "
+&& composer dump-autoload -o ; \
+# && clea &&
+php echo "
 ===================== 🚀 Done 🚀 ===================
 
       Magento 2 Installed successfully!

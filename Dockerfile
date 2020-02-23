@@ -1,6 +1,7 @@
-FROM php:7.1-apache
+#FROM php:7.1-apache
+FROM php:7.3.14-apache
 
-MAINTAINER Rafael Corrêa Gomes <rafaelcgstz@gmail.com>
+MAINTAINER John Glassman <MantisMan13@yahoo.com>
 
 ENV XDEBUG_PORT 9000
 
@@ -13,22 +14,25 @@ RUN apt-get update \
 	&& DEBIAN_FRONTEND=noninteractive apt-get install -y \
 	libfreetype6-dev \
 	libicu-dev \
-  libssl-dev \
+	libssl-dev \
 	libjpeg62-turbo-dev \
 	libmcrypt-dev \
 	libedit-dev \
 	libedit2 \
 	libxslt1-dev \
+	libzip-dev \
 	apt-utils \
 	gnupg \
 	redis-tools \
-	mysql-client \
+	default-mysql-client \
+	mariadb-client \
 	git \
 	vim \
 	wget \
 	curl \
 	lynx \
 	psmisc \
+	zip \
 	unzip \
 	tar \
 	cron \
@@ -45,7 +49,7 @@ RUN docker-php-ext-configure \
   	bcmath \
   	intl \
   	mbstring \
-  	mcrypt \
+#  	mcrypt \
   	pdo_mysql \
   	soap \
   	xsl \
@@ -63,9 +67,14 @@ RUN apt-get update \
 
 # Install Node, NVM, NPM and Grunt
 
-RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - \
-  	&& apt-get install -y nodejs build-essential \
-    && curl https://raw.githubusercontent.com/creationix/nvm/v0.16.1/install.sh | sh \
+#RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - \
+#  	&& apt-get install -y nodejs build-essential \
+#    && curl https://raw.githubusercontent.com/creationix/nvm/v0.16.1/install.sh | sh \
+#    && npm i -g grunt-cli yarn
+
+RUN curl -sL https://deb.nodesource.com/setup_13.x | bash - \
+    && apt-get install -y nodejs build-essential \
+    && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.2/install.sh | sh \
     && npm i -g grunt-cli yarn
 
 # Install Composer
